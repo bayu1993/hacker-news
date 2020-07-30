@@ -11,9 +11,9 @@ interface ApiServices {
     fun getTopStories(): Single<MutableList<Int>>
 
     @GET("item/{id}")
-    fun getComment(@Path("id") idComment: String): Single<CommentResponse>
+    fun getItemComment(@Path("id") id: String): Single<CommentResponse>
 
     @GET("item/{id}")
-    fun getStory(@Path("id") idStory: String): Single<StoryResponse>
+    fun getItemStory(@Path("id") id: String): Single<StoryResponse>
 
 }

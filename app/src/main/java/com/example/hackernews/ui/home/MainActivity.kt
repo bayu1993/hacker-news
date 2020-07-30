@@ -1,5 +1,6 @@
 package com.example.hackernews.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -7,12 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.R
 import com.example.hackernews.data.response.TopStory
+import com.example.hackernews.ui.detail.DetailActivity
 import com.example.hackernews.ui.home.adapter.StoryAdapter
 import com.example.hackernews.ui.home.presenter.MainPresenter
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.inject
-import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), MainView.View {
     private val presenter: MainPresenter by inject()
@@ -26,7 +26,12 @@ class MainActivity : AppCompatActivity(), MainView.View {
     private fun initView() {
         presenter.getStories()
         onAttachView()
-        adapter = StoryAdapter()
+        adapter = StoryAdapter() {
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra(EXTRA_ID, it.id)
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+        }
         rv_stories.setHasFixedSize(true)
         rv_stories.layoutManager = LinearLayoutManager(this)
         rv_stories.adapter = adapter
@@ -49,7 +54,7 @@ class MainActivity : AppCompatActivity(), MainView.View {
     }
 
     override fun showError(e: String?) {
-        Toast.makeText(this, e,Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, e, Toast.LENGTH_SHORT).show()
     }
 
     override fun onAttachView() {
@@ -58,5 +63,9 @@ class MainActivity : AppCompatActivity(), MainView.View {
 
     override fun onDetachView() {
         presenter.onDetach()
+    }
+
+    companion object {
+        const val EXTRA_ID = "EXTRA_ID"
     }
 }

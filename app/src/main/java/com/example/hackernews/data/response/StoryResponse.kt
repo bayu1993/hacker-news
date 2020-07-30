@@ -3,6 +3,8 @@ package com.example.hackernews.data.response
 import com.google.gson.annotations.SerializedName
 
 data class StoryResponse(
+    @SerializedName("by")
+    val user:String,
     @SerializedName("id")
     val id: Int,
     @SerializedName("kids")

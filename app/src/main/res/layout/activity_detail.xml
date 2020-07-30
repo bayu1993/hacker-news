@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.detail.DetailActivity">
 
+    <ProgressBar
+        android:id="@+id/progress_detail"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:layout_height="wrap_content"/>
+
+
     <TextView
+        android:id="@+id/tv_favorites_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -15,6 +25,7 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:text="Hello world"
+        android:visibility="gone"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -26,6 +37,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:padding="8dp"
+        android:visibility="gone"
         android:text="by James"
         android:textSize="20sp"
         android:gravity="center"
@@ -40,17 +52,20 @@
         android:layout_marginEnd="16dp"
         android:padding="8dp"
         android:gravity="center"
+        android:visibility="gone"
         android:layout_gravity="center_horizontal"
         android:text="12/12/2012"
         android:textSize="16sp" />
 
     <TextView
+        android:id="@+id/tv_desc_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:padding="8dp"
+        android:visibility="gone"
         android:text="Deskripsi: "
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -62,10 +77,12 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:padding="8dp"
+        android:visibility="gone"
         android:text="Hello world"
         android:textSize="16sp" />
 
     <TextView
+        android:id="@+id/tv_comment_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -73,12 +90,14 @@
         android:layout_marginTop="16dp"
         android:padding="8dp"
         android:text="Komentar"
+        android:visibility="gone"
         android:textSize="20sp"
         android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_comment"
         android:padding="8dp"
+        android:visibility="gone"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_width="match_parent"

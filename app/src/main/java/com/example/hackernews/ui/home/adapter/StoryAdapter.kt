@@ -8,7 +8,8 @@ import com.example.hackernews.R
 import com.example.hackernews.data.response.TopStory
 import kotlinx.android.synthetic.main.item_story.view.*
 
-class StoryAdapter : RecyclerView.Adapter<StoryAdapter.ViewHolder>() {
+class StoryAdapter(private val listener: (TopStory) -> Unit) :
+    RecyclerView.Adapter<StoryAdapter.ViewHolder>() {
 
     private val stories = mutableListOf<TopStory>()
 
@@ -23,7 +24,7 @@ class StoryAdapter : RecyclerView.Adapter<StoryAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(stories[position])
+        holder.bind(stories[position], listener)
     }
 
     fun setData(data: MutableList<TopStory>) {
@@ -33,10 +34,13 @@ class StoryAdapter : RecyclerView.Adapter<StoryAdapter.ViewHolder>() {
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(data: TopStory) {
+        fun bind(data: TopStory, listener: (TopStory) -> Unit) {
             itemView.tv_item_title.text = data.title
             itemView.tv_item_score.text = "Score ${data.score}"
             itemView.tv_comment_count.text = "Comment ${data.commentCount}"
+            itemView.setOnClickListener {
+                listener(data)
+            }
         }
 
     }

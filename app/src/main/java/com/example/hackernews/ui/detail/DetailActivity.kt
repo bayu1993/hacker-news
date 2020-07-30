@@ -1,6 +1,8 @@
 package com.example.hackernews.ui.detail
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +27,8 @@ class DetailActivity : AppCompatActivity(), DetailView.View {
     }
 
     private fun initView() {
+        supportActionBar?.title = "Detail Hacker News"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val id = intent.getIntExtra(EXTRA_ID, 0)
         adapter = CommentAdapter()
         rv_comment.setHasFixedSize(true)
@@ -81,5 +85,25 @@ class DetailActivity : AppCompatActivity(), DetailView.View {
 
     override fun onDetachView() {
         presenter.onDetach()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.favorite_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_fav -> {
+                item.setIcon(R.drawable.ic_favorites)
+                Toast.makeText(this, "add to favorite", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return super.onSupportNavigateUp()
     }
 }

@@ -6,7 +6,7 @@ data class StoryResponse(
     @SerializedName("id")
     val id: Int,
     @SerializedName("kids")
-    val kids: List<Int>,
+    val kids: MutableList<Int?>?,
     @SerializedName("score")
     val score: Int,
     @SerializedName("text")

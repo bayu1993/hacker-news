@@ -1,5 +1,6 @@
 package com.example.hackernews.network
 
+import com.example.hackernews.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -10,7 +11,7 @@ class ApiClient {
     fun create(): ApiServices {
         val retrofit = Retrofit.Builder()
             .client(provideOkhttpClient())
-            .baseUrl("https://hacker-news.firebaseio.com/v0/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()

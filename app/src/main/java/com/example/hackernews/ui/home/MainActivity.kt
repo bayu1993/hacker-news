@@ -1,6 +1,8 @@
 package com.example.hackernews.ui.home
 
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.R
@@ -35,14 +37,19 @@ class MainActivity : AppCompatActivity(), MainView.View {
     }
 
     override fun showView() {
-
+        progress_stories.visibility = View.GONE
+        rv_stories.visibility = View.VISIBLE
+        tv_favorites.visibility = View.VISIBLE
     }
 
     override fun hideView() {
-
+        progress_stories.visibility = View.VISIBLE
+        rv_stories.visibility = View.GONE
+        tv_favorites.visibility = View.GONE
     }
 
     override fun showError(e: String?) {
+        Toast.makeText(this, e,Toast.LENGTH_SHORT).show()
     }
 
     override fun onAttachView() {

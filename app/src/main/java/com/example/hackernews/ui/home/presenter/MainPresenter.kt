@@ -15,13 +15,14 @@ class MainPresenter(
     private val compositeDisposable: CompositeDisposable
 ) : MainView.Presenter {
     private var mView: MainView.View? = null
-    val list = mutableListOf<TopStory>()
+    private val list = mutableListOf<TopStory>()
     override fun getStories() {
         mView?.hideView()
         repo.getStories().observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
             .subscribeBy(
                 onSuccess = { ids ->
-                    for (i in 0 until ids.size){
+                    mView?.hideView()
+                    for (i in 0 until ids.size) {
                         repo.getStory(ids[i].toString()).subscribeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.io()).subscribeBy(
                                 onSuccess = { story ->
@@ -29,7 +30,7 @@ class MainPresenter(
                                         TopStory(
                                             story.id,
                                             story.title,
-                                            story.kids?.count()?:0,
+                                            story.kids?.count() ?: 0,
                                             story.score
                                         )
                                     )

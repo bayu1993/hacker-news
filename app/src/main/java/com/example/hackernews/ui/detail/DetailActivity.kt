@@ -12,12 +12,16 @@ import com.example.hackernews.data.response.StoryResponse
 import com.example.hackernews.ui.detail.adapter.CommentAdapter
 import com.example.hackernews.ui.detail.presenter.DetailPresenter
 import com.example.hackernews.ui.home.MainActivity.Companion.EXTRA_ID
+import com.example.hackernews.utils.SharePref
 import kotlinx.android.synthetic.main.activity_detail.*
 import org.koin.android.ext.android.inject
 
 class DetailActivity : AppCompatActivity(), DetailView.View {
     private val presenter: DetailPresenter by inject()
     private lateinit var adapter: CommentAdapter
+    private lateinit var sharePref: SharePref
+    private var title: String = ""
+    private var isFavorite = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +35,7 @@ class DetailActivity : AppCompatActivity(), DetailView.View {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val id = intent.getIntExtra(EXTRA_ID, 0)
         adapter = CommentAdapter()
+        sharePref = SharePref(this)
         rv_comment.setHasFixedSize(true)
         rv_comment.layoutManager = LinearLayoutManager(this)
         rv_comment.adapter = adapter
@@ -41,10 +46,13 @@ class DetailActivity : AppCompatActivity(), DetailView.View {
     }
 
     override fun showStory(data: StoryResponse) {
-        tv_favorites_detail.text = data.title
+        title = data.title
+        tv_favorites_detail.text = title
         tv_user.text = data.user
         tv_desc.text = data.type
         tv_date.visibility = View.GONE
+        val titleSharePref = sharePref.getString(EXTRA_FAV)
+        isFavorite = titleSharePref?.toLowerCase().equals(title.toLowerCase())
     }
 
     override fun showError(e: String?) {
@@ -89,14 +97,25 @@ class DetailActivity : AppCompatActivity(), DetailView.View {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.favorite_menu, menu)
+        val item = menu?.findItem(R.menu.favorite_menu)
+        if (isFavorite) item?.setIcon(R.drawable.ic_favorites) else item?.setIcon(R.drawable.ic_favorites_border)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_fav -> {
-                item.setIcon(R.drawable.ic_favorites)
-                Toast.makeText(this, "add to favorite", Toast.LENGTH_SHORT).show()
+                if (!isFavorite) {
+                    if (title.isNotEmpty()) {
+                        item.setIcon(R.drawable.ic_favorites)
+                        sharePref.setString(title, EXTRA_FAV)
+                        Toast.makeText(this, "add to favorite", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    sharePref.clear()
+                    item.setIcon(R.drawable.ic_favorites_border)
+                    Toast.makeText(this, "delete from favorite", Toast.LENGTH_SHORT).show()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -105,5 +124,9 @@ class DetailActivity : AppCompatActivity(), DetailView.View {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return super.onSupportNavigateUp()
+    }
+
+    companion object {
+        const val EXTRA_FAV = "EXTRA_FAV"
     }
 }

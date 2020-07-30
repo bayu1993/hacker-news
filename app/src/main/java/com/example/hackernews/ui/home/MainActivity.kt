@@ -9,14 +9,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hackernews.R
 import com.example.hackernews.data.response.TopStory
 import com.example.hackernews.ui.detail.DetailActivity
+import com.example.hackernews.ui.detail.DetailActivity.Companion.EXTRA_FAV
 import com.example.hackernews.ui.home.adapter.StoryAdapter
 import com.example.hackernews.ui.home.presenter.MainPresenter
+import com.example.hackernews.utils.SharePref
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), MainView.View {
     private val presenter: MainPresenter by inject()
     private lateinit var adapter: StoryAdapter
+    private lateinit var sharePref: SharePref
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -24,6 +27,7 @@ class MainActivity : AppCompatActivity(), MainView.View {
     }
 
     private fun initView() {
+        sharePref = SharePref(this)
         presenter.getStories()
         onAttachView()
         adapter = StoryAdapter() {
@@ -35,6 +39,12 @@ class MainActivity : AppCompatActivity(), MainView.View {
         rv_stories.setHasFixedSize(true)
         rv_stories.layoutManager = LinearLayoutManager(this)
         rv_stories.adapter = adapter
+        tv_favorites.text = sharePref.getString(EXTRA_FAV)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        tv_favorites.text = sharePref.getString(EXTRA_FAV)
     }
 
     override fun showStories(stories: MutableList<TopStory>) {

@@ -22,6 +22,7 @@ class DetailActivity : AppCompatActivity(), DetailView.View {
     private lateinit var sharePref: SharePref
     private var title: String = ""
     private var isFavorite = false
+    private var menuItem: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +42,14 @@ class DetailActivity : AppCompatActivity(), DetailView.View {
         rv_comment.adapter = adapter
         if (id != 0) {
             presenter.getStory(id.toString())
+            onAttachView()
         }
-        onAttachView()
+    }
+
+    private fun favoriteState() {
+        val titleSharePref = sharePref.getString(EXTRA_FAV)
+        isFavorite = titleSharePref.equals(title)
+        setFavorite()
     }
 
     override fun showStory(data: StoryResponse) {
@@ -51,8 +58,7 @@ class DetailActivity : AppCompatActivity(), DetailView.View {
         tv_user.text = data.user
         tv_desc.text = data.type
         tv_date.visibility = View.GONE
-        val titleSharePref = sharePref.getString(EXTRA_FAV)
-        isFavorite = titleSharePref?.toLowerCase().equals(title.toLowerCase())
+        favoriteState()
     }
 
     override fun showError(e: String?) {
@@ -97,28 +103,38 @@ class DetailActivity : AppCompatActivity(), DetailView.View {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.favorite_menu, menu)
-        val item = menu?.findItem(R.menu.favorite_menu)
-        if (isFavorite) item?.setIcon(R.drawable.ic_favorites) else item?.setIcon(R.drawable.ic_favorites_border)
+        menuItem = menu
+        setFavorite()
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.menu_fav -> {
-                if (!isFavorite) {
-                    if (title.isNotEmpty()) {
-                        item.setIcon(R.drawable.ic_favorites)
-                        sharePref.setString(title, EXTRA_FAV)
-                        Toast.makeText(this, "add to favorite", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    sharePref.clear()
-                    item.setIcon(R.drawable.ic_favorites_border)
-                    Toast.makeText(this, "delete from favorite", Toast.LENGTH_SHORT).show()
-                }
+                if (isFavorite) removeFromFavorites() else addToFavorites()
+                isFavorite = !isFavorite
+                setFavorite()
+                true
             }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
+    }
+
+    private fun addToFavorites() {
+        if (title.isNotEmpty()) {
+            sharePref.setString(title, EXTRA_FAV)
+            Toast.makeText(this, "add to favorites", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun removeFromFavorites() {
+        sharePref.clear()
+        Toast.makeText(this, "remove from favorites", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setFavorite() {
+        if (isFavorite) menuItem?.getItem(0)?.setIcon(R.drawable.ic_favorites)
+        else menuItem?.getItem(0)?.setIcon(R.drawable.ic_favorites_border)
     }
 
     override fun onSupportNavigateUp(): Boolean {
